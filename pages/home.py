@@ -44,11 +44,12 @@ with st.container(border=True):
     with col1:
         st.markdown("##### :primary[:material/storage:] Storage Trends")
         storage_counts = get_value_counts_pct(df, 'storage_environment', top_n=storage_top_n)
+        storage_counts['storage_label'] = storage_counts['storage_environment'].str.replace(r'\s*\(.*\)', '', regex=True)
         storage_chart = alt.Chart(storage_counts).mark_bar(cornerRadiusEnd=4).encode(
-            y=alt.Y('storage_environment:N', sort='-x', title=None, axis=alt.Axis(labelLimit=0)),
+            y=alt.Y('storage_label:N', sort='-x', title=None, axis=alt.Axis(labelLimit=0)),
             x=alt.X('count:Q', title='Respondents'),
-            color=alt.Color('storage_environment:N', scale=alt.Scale(range=get_categorical_colors()), legend=None),
-            tooltip=['storage_environment:N', 'count:Q', alt.Tooltip('percentage:Q', format='.1f', title='%')]
+            color=alt.Color('storage_label:N', scale=alt.Scale(range=get_categorical_colors()), legend=None),
+            tooltip=['storage_label:N', 'count:Q', alt.Tooltip('percentage:Q', format='.1f', title='%')]
         ).properties(height=320)
         st.altair_chart(storage_chart, use_container_width=True)
         top_storage = storage_counts.iloc[0]['storage_environment'] if len(storage_counts) > 0 else "N/A"
